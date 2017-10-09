@@ -3,6 +3,8 @@ import argparse
 import datetime
 import json
 
+from game import Game
+
 parser = argparse.ArgumentParser()
 parser.add_argument('-u', '--username', type=str,
                     help='Your track-o-bot username')
@@ -14,6 +16,8 @@ parser.add_argument('-i', '--infile', type=str,
 parser.add_argument('-o', '--outfile', type=str, default='trackobot_games.json',
                     help='The name of a file to store the json data for the games fetched from track-o-bot. '
                     + 'When run in fetch mode, always writes the data fetched.')
+parser.add_argument('-c', '--hero', type=str,
+                    help='The hero class you want to analyze, e.g. Mage. If not specified all games will be analyzed with a simple summary.')
 args = parser.parse_args()
 
 if not args.infile and not (args.username and args.token):
@@ -25,7 +29,9 @@ games = []
 
 if args.infile:
     with open(args.infile) as game_data:    
-        games = json.load(game_data)
+        for g in json.load(game_data):
+            games.append(Game(g))
+            print(games[-1])
 else:
     print('Fetching game data from Track-o-bot for ' + args.username)
     trackobot_url = 'https://trackobot.com/profile/history.json'
@@ -35,27 +41,54 @@ else:
     # Track-o-bot only has per card data from the last 10 days.
     ten_days_ago = datetime.datetime.now() - datetime.timedelta(days=10)
     found_last_game = False
+    games_json = []
 
     while not found_last_game:
         parameters['page'] += 1
         r = requests.get(trackobot_url, params=parameters)
         r.raise_for_status()
 
-        for game in r.json()['history']:
-            print(game['result'] + ': ' + repr(game['hero_deck']) + ' ' + game['hero'] + ' vs. ' +
-                  repr(game['opponent_deck']) + ' ' + game['opponent'] + ' ' + game['added'])
-            if game['added'] < ten_days_ago.isoformat():
+        for g in r.json()['history']:
+            game = Game(g)
+            print(game)
+            if game.date < ten_days_ago.isoformat():
                 print('Done getting games from the last 10 days.')
                 found_last_game = True
                 break
             else:
                 games.append(game)
-
-    print('Found ' + repr(len(games)) + ' games from the last 10 days.')    
+                games_json.append(g)
 
     # Always save the trackobot data, making it easy to re-run without having to re-fetch.
     with open('trackobot_games.json', 'w') as fp:
-        json.dump(games, fp)
+        json.dump(games_json, fp)
 
 # Ready to start analyzing the games.
-print('Analyzing ' + repr(len(games)) + ' games.')
+total_games = len(games)
+print('Analyzing ' + repr(total_games) + ' games.')
+
+# Give a quick W/L summary of the games
+wins = 0
+losses = 0
+
+for game in games:
+    if (not args.hero) or (args.hero == game.hero):
+        if game.won():
+            wins += 1
+        else:
+            losses += 1
+
+if args.hero:
+    print(args.hero + ' games')
+else:
+    print('All games')
+
+print(repr(wins) + ' wins')
+print(repr(losses) + ' losses')
+print('{:.2%} win percentage'.format(wins/(wins + losses)))
+
+    
+            
+    
+
+
