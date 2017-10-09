@@ -4,6 +4,7 @@ import datetime
 import json
 
 from game import Game
+from deckanalysis import DeckAnalysis
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-u', '--username', type=str,
@@ -87,7 +88,12 @@ print(repr(wins) + ' wins')
 print(repr(losses) + ' losses')
 print('{:.2%} win percentage'.format(wins/(wins + losses)))
 
-    
+# Perform a more detailed analysis for the specified hero class.
+if args.hero:
+   analysis = DeckAnalysis(games, args.hero)
+   analysis.summarize()
+
+   
             
     
 
