@@ -37,24 +37,15 @@ class DeckAnalysis(object):
                 
     def summarize(self):
         """Print a table summarizing the game results."""
-        
-        # We'll be adding more columns based on the opponent classes we encountered.
-        headers = ['games', 'wins', 'losses', 'win %']
+        headers = ['opponent', 'games', 'wins', 'losses', 'win %']
 
         # Add the data for the first columns summarizing all games.
         # Tabulate expects a list of lists, where each list represents a row of data.
         game_count = self.wins + self.losses
-        table = [[game_count, self.wins, self.losses, (self.wins / game_count) * 100]]
+        table = [['All', game_count, self.wins, self.losses, (self.wins / game_count) * 100]]
 
         for opponent, result in sorted(self.opponents.items(), key=lambda k_v: k_v[1]['games'], reverse=True):
-            # Add headers and data for this opponent
-            headers.append(opponent + ' games')
-            table[-1].append(result['games'])
-            headers.append('wins')
-            table[-1].append(result['wins'])
-            headers.append('losses')
-            table[-1].append(result['losses'])
-            headers.append('win %')
-            table[-1].append((result['wins'] / result['games']) * 100)
+            # Add a row for this opponent.
+            table.append([opponent, result['games'], result['wins'], result['losses'], (result['wins'] / result['games']) * 100])
 
         print(tabulate(table, headers=headers, floatfmt='.2f'))
