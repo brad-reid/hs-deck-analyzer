@@ -17,6 +17,8 @@ class DeckAnalysis(object):
         self.opponents = {}
         # Card dictionary keyed by card name, value is a dict of win/loss data.
         self.cards = {}
+        # Openings dictionary keyed by a turn 1-3 tuple of the cards played on those turn, value is a dict of win/loss data.
+        self.openings = {}
         self.__analyze()
 
     def __analyze(self):
@@ -54,6 +56,15 @@ class DeckAnalysis(object):
                     self.cards[card_name]['opponents'][opponent]['wins'] += 1
                 else:
                     self.cards[card_name]['opponents'][opponent]['losses'] += 1
+
+            # Calculate the winrates of various openings.
+            opening = game.opening()
+            self.openings[opening] = self.openings.get(opening, {'games': 0, 'wins': 0, 'losses': 0})
+            self.openings[opening]['games'] += 1
+            if game.won():
+                self.openings[opening]['wins'] += 1
+            else:
+                self.openings[opening]['losses'] += 1            
                 
     def summarize(self):
         """Print a table summarizing the game results.
@@ -110,19 +121,36 @@ class DeckAnalysis(object):
         print(tabulate(card_table, headers=card_headers, floatfmt='.2f'))
 
         # Print the card vs. specific opponent analysis, also sorted by opponent frequency.
-        # Note that this data really starts to suffer from sparse data.        
-        for opponent in opponents_by_frequency:
-            card_headers = ['card vs. ' + opponent, 'games', 'wins', 'losses', 'win %', 'unplayed wins', 'unplayed losses', 'unplayed %']
-            card_table = []
-            for card in cards_by_win_percent:
-                # Not every card will have been played against every opponent.
-                if not opponent in self.cards[card]['opponents']:
-                    continue
-                card_opp_data = self.cards[card]['opponents'][opponent]
-                if card_opp_data is None:
-                    continue
-                card_table.append([card, card_opp_data['games'], card_opp_data['wins'], card_opp_data['losses'], card_opp_data['win percentage'],
-                                   card_opp_data['unplayed wins'], card_opp_data['unplayed losses'], card_opp_data['unplayed percentage']])
-            
-            print()
-            print(tabulate(card_table, headers=card_headers, floatfmt='.2f'))
+        # Note that this data really starts to suffer from sparse data.
+        # TODO: make it easy to opt in/out of printing this.
+        if False:
+            for opponent in opponents_by_frequency:
+                card_headers = ['card vs. ' + opponent, 'games', 'wins', 'losses', 'win %', 'unplayed wins', 'unplayed losses', 'unplayed %']
+                card_table = []
+                for card in cards_by_win_percent:
+                    # Not every card will have been played against every opponent.
+                    if not opponent in self.cards[card]['opponents']:
+                        continue
+                    card_opp_data = self.cards[card]['opponents'][opponent]
+                    if card_opp_data is None:
+                        continue
+                    card_table.append([card, card_opp_data['games'], card_opp_data['wins'], card_opp_data['losses'], card_opp_data['win percentage'],
+                                       card_opp_data['unplayed wins'], card_opp_data['unplayed losses'], card_opp_data['unplayed percentage']])
+                
+                print()
+                print(tabulate(card_table, headers=card_headers, floatfmt='.2f'))
+
+        # Print the analysis of the openings.
+        headers = ['turn 1', 'turn 2', 'turn 3', 'games', 'wins', 'losses', 'win %']
+        table = []
+
+        # Sort openings by the turn 1, 2, 3 plays.
+        for opening_data in self.openings.values():
+            opening_data['win percentage'] = (opening_data['wins'] / opening_data['games']) * 100
+           
+        for opening, opening_data in sorted(self.openings.items(), key=lambda k_v: (sorted(k_v[0][0]), sorted(k_v[0][1]), sorted(k_v[0][2]))):
+            table.append([sorted(opening[0]), sorted(opening[1]), sorted(opening[2]),
+                          opening_data['games'], opening_data['wins'], opening_data['losses'], opening_data['win percentage']])
+
+        print()
+        print(tabulate(table, headers=headers, floatfmt='.2f'))

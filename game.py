@@ -46,3 +46,13 @@ class Game(object):
         """Return the set of cards that the hero (not the opponent) played this game."""
         return set(map(lambda y : y['card']['name'], filter(lambda x : x['player'] == 'me', self.game_data['card_history'])))
 
+    def cards_on_turn(self, turn: int):
+        """Return a frozenset of cards that the hero played on the specified turn. The first turn is 1."""
+        return frozenset(map(lambda y : y['card']['name'],
+                             filter(lambda x : x['player'] == 'me' and x['turn'] == turn, self.game_data['card_history'])))
+
+    def opening(self):
+        """Return a tuple of frozensets of the cards played each turn on the first 3 turns of this game.
+            e.g. (frozenset({'Mana Wyrm'}), frozenset({'Arcanologist'}), frozenset({'Mirror Entity', 'Kirin Tor Mage'}))
+        """
+        return (self.cards_on_turn(1), self.cards_on_turn(2), self.cards_on_turn(3))
