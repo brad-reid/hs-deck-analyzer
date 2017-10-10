@@ -42,3 +42,7 @@ class Game(object):
     def won(self):
         return self.game_data['result'] == 'win'
     
+    def cards(self):
+        """Return the set of cards that the hero (not the opponent) played this game."""
+        return set(map(lambda y : y['card']['name'], filter(lambda x : x['player'] == 'me', self.game_data['card_history'])))
+
