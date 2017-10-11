@@ -1,11 +1,8 @@
 class Game(object):
-    """A class to encapsulate game data returned from track-o-bot.
-
-    Attributes:
-        game_data: A dictionary representing a single game
-    """
+    """A class to encapsulate game data returned from track-o-bot."""
 
     def __init__(self, game_data: dict):
+        """Create a new game given a track-o-bot dictionary representing a single game."""
         self.game_data = game_data
 
     @property
