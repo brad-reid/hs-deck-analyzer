@@ -163,3 +163,46 @@ class Hero(object):
 
         print()
         print(tabulate(table, headers=headers, floatfmt='.2f'))
+
+    def analyze_cards_by_turn(self):
+        """Analyze the winrates for the cards played on the first 3 turns.
+            This also suffers from sparse data.
+            For now only show results for cards that appeared in more than 1 game on that turn.
+        """
+
+        # Turns dictionary keyed by the turn number (1, 2, 3).
+        turns = {}
+
+        # Calculate the winrates of various openings.
+        for game in self.games:
+            opening = game.opening()
+            for index, cards in enumerate(opening):
+                turn = index + 1
+                turns[turn] = turns.get(turn, {'cards': {}})
+                plays = {'pass'} if not cards else cards
+                for card in plays:
+                    turns[turn]['cards'][card] = turns[turn]['cards'].get(card, {'games': 0, 'wins': 0, 'losses': 0})
+                    turns[turn]['cards'][card]['games'] += 1
+                    if game.won():
+                        turns[turn]['cards'][card]['wins'] += 1
+                    else:
+                        turns[turn]['cards'][card]['losses'] += 1
+
+        for turn, turn_data in turns.items():
+            for card_data in turn_data['cards'].values():
+                card_data['win percentage'] = (card_data['wins'] / card_data['games']) * 100
+
+        # Print the analysis of the turns and cards played.
+        headers = ['turn', 'play', 'games', 'wins', 'losses', 'win %']
+        table = []
+
+        # Sort by turn, then win rate.
+        for turn, turn_data in turns.items():
+            for card, card_data in sorted(turn_data['cards'].items(), key=lambda k_v: k_v[1]['win percentage'], reverse=True):
+                # For now only display results for cards that were played on this turn in more than 1 game.
+                if card_data['games'] <= 1:
+                    continue
+                table.append([turn, card, card_data['games'], card_data['wins'], card_data['losses'], card_data['win percentage']])
+
+        print()
+        print(tabulate(table, headers=headers, floatfmt='.2f'))

@@ -95,9 +95,7 @@ if args.hero:
    hero.analyze_matchups()
    hero.analyze_cards()
    hero.analyze_openings()
+   hero.analyze_cards_by_turn()
 
-   
-            
-    
 
 
