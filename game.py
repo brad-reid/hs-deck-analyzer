@@ -53,3 +53,7 @@ class Game(object):
             e.g. (frozenset({'Mana Wyrm'}), frozenset({'Arcanologist'}), frozenset({'Mirror Entity', 'Kirin Tor Mage'}))
         """
         return (self.cards_on_turn(1), self.cards_on_turn(2), self.cards_on_turn(3))
+
+    def last_turn(self):
+        """Find the last turn taken by the hero in this game."""
+        return max(map(lambda x: x['turn'], filter(lambda x: x['player'] == 'me', self.game_data['card_history'])), default=0)

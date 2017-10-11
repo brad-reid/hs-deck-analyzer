@@ -164,23 +164,26 @@ class Hero(object):
         print()
         print(tabulate(table, headers=headers, floatfmt='.2f'))
 
-    def analyze_cards_by_turn(self):
-        """Analyze the winrates for the cards played on the first 3 turns.
-            This also suffers from sparse data.
-            For now only show results for cards that appeared in more than 1 game on that turn.
+    def analyze_cards_by_turn(self, min_sample_size=5):
+        """Analyze the win rates for the cards played on specific turns.
+            This also suffers from sparse data so by default only shows data when a card is played
+            on a turn 5 or more times.
         """
 
-        # Turns dictionary keyed by the turn number (1, 2, 3).
+        # Turns dictionary keyed by the turn number e.g. 1, 2, 3.
         turns = {}
 
-        # Calculate the winrates of various openings.
+        # Calculate the win rates of cards played on specific turns.
         for game in self.games:
-            opening = game.opening()
-            for index, cards in enumerate(opening):
-                turn = index + 1
+            last_turn = game.last_turn()
+            if not last_turn:
+                continue
+
+            for turn in range(1, last_turn):
+                cards = game.cards_on_turn(turn) or {'pass'}
                 turns[turn] = turns.get(turn, {'cards': {}})
-                plays = {'pass'} if not cards else cards
-                for card in plays:
+
+                for card in cards:
                     turns[turn]['cards'][card] = turns[turn]['cards'].get(card, {'games': 0, 'wins': 0, 'losses': 0})
                     turns[turn]['cards'][card]['games'] += 1
                     if game.won():
@@ -199,8 +202,8 @@ class Hero(object):
         # Sort by turn, then win rate.
         for turn, turn_data in turns.items():
             for card, card_data in sorted(turn_data['cards'].items(), key=lambda k_v: k_v[1]['win percentage'], reverse=True):
-                # For now only display results for cards that were played on this turn in more than 1 game.
-                if card_data['games'] <= 1:
+                # Ignore small samples.
+                if card_data['games'] < min_sample_size:
                     continue
                 table.append([turn, card, card_data['games'], card_data['wins'], card_data['losses'], card_data['win percentage']])
 
