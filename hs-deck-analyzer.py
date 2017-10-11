@@ -4,7 +4,7 @@ import datetime
 import json
 
 from game import Game
-from deckanalysis import DeckAnalysis
+from hero import Hero
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-u', '--username', type=str,
@@ -89,9 +89,12 @@ print(repr(losses) + ' losses')
 print('{:.2%} win percentage'.format(wins/(wins + losses)))
 
 # Perform a more detailed analysis for the specified hero class.
+# TODO: Make it easy to turn on/off the various analyses. What's the right way to do that with argparse?
 if args.hero:
-   analysis = DeckAnalysis(games, args.hero)
-   analysis.summarize()
+   hero = Hero(games, args.hero)
+   hero.analyze_matchups()
+   hero.analyze_cards()
+   hero.analyze_openings()
 
    
             
