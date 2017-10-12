@@ -7,10 +7,14 @@ class Hero(object):
         For reddit formatting tips see: https://www.reddit.com/r/reddit.com/comments/6ewgt/reddit_markdown_primer_or_how_do_you_do_all_that/c03nik6/
     """
 
-    def __init__(self, games: list, hero: str):
-        """Create a new hero given a list of games and a hero."""
+    def __init__(self, games: list, hero: str, min_sample_size=0):
+        """Create a new hero given a list of games and a hero.
+            If a minimum sample size is added, the card related analyses will only show data if there
+            are at least that many results in the sample.
+        """
         self.games = []
         self.hero = hero
+        self.min_sample_size = min_sample_size
         self.wins = 0
         self.losses = 0
 
@@ -60,7 +64,9 @@ class Hero(object):
 
     def analyze_cards(self):
         """Analyze how the cards played by hero fared against all opponents.
-            Summarize the card winrates as a whole.
+            Summarize the card winrates as a whole. Some cards can suffer from sparse data,
+            especially if you are playing a deck that can pull in random cards.
+            The output uses the hero's min sample size.
             TODO: Make it easy to turn on/off the card vs. opponent winrates,
             maybe with a matchup threshold since this data can get very sparse.
         """
@@ -108,6 +114,9 @@ class Hero(object):
         cards_by_win_percent = []
 
         for card, card_data in sorted(cards.items(), key=lambda k_v: k_v[1]['win percentage'], reverse=True):
+            # Ignore small samples.
+            if card_data['games'] < self.min_sample_size:
+                continue
             cards_by_win_percent.append(card)
             card_table.append([card, card_data['games'], card_data['wins'], card_data['losses'], card_data['win percentage'],
                                card_data['unplayed wins'], card_data['unplayed losses'], card_data['unplayed percentage']])
@@ -117,6 +126,7 @@ class Hero(object):
         print('## Card Win Rates')
         print("Cards are ordered by win rate. Track-o-bot only has data for the cards played, so the unplayed columns are ")
         print("attempting to help answer questions about how the deck performs when you don't draw that card or it sits in your hand.")
+        print("Note that data is only shown when a card is played on a turn at least " + repr(self.min_sample_size) + " times.")
         print()
         print(tabulate(card_table, headers=card_headers, floatfmt='.2f', tablefmt='pipe'))
 
@@ -187,10 +197,9 @@ class Hero(object):
         print()
         print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt='pipe'))
 
-    def analyze_cards_by_turn(self, min_sample_size=5):
+    def analyze_cards_by_turn(self):
         """Analyze the win rates for the cards played on specific turns.
-            This also suffers from sparse data so by default only shows data when a card is played
-            on a turn 5 or more times.
+            This also suffers from sparse data and uses the hero's min sample size.
         """
 
         # Turns dictionary keyed by the turn number e.g. 1, 2, 3.
@@ -226,12 +235,17 @@ class Hero(object):
         for turn, turn_data in turns.items():
             for card, card_data in sorted(turn_data['cards'].items(), key=lambda k_v: k_v[1]['win percentage'], reverse=True):
                 # Ignore small samples.
-                if card_data['games'] < min_sample_size:
+                if card_data['games'] < self.min_sample_size:
                     continue
                 table.append([turn, card, card_data['games'], card_data['wins'], card_data['losses'], card_data['win percentage']])
 
         print()
-        print(tabulate(table, headers=headers, floatfmt='.2f'))
+        print('## Win Rates When Playing Cards on Specific Turns')
+        print("Note that data is only shown when a card is played on a turn at least " + repr(self.min_sample_size) + " times.")
+        print("This data attempts to help answer questions about what cards you should mulligan for and which plays are strongest.")
+        print("Furthermore, it can help validate whether your playstyle and plan for the deck is working.")
+        print()
+        print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt='pipe'))
 
     def analyze_mana(self):
         """Analyze the win rates for mana differential between what the hero spent and what
@@ -277,5 +291,9 @@ class Hero(object):
             table.append([key, mana_differentials[key]['games'], mana_differentials[key]['wins'], mana_differentials[key]['losses'],
                           (mana_differentials[key]['wins'] / mana_differentials[key]['games']) * 100])
 
+        print()
+        print('## Mana Differential Win Rates')
+        print("This is the difference in mana spent between you and your opponent.")
+        print("Note that the game winner will usually take the last turn, which probably helps pad the mana spent in their favor.")
         print()
         print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt="pipe"))

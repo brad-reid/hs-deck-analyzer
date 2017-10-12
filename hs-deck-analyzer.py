@@ -11,13 +11,16 @@ parser.add_argument('-u', '--username', type=str,
 parser.add_argument('-t', '--token', type=str,
                     help='Your track-o-bot API token')
 parser.add_argument('-i', '--infile', type=str,
-                    help='The name of a file containing json data for the games you want to analyze.'
+                    help='The name of a file containing json data for the games you want to analyze. '
                     + 'If a file is specified, it will be used instead of fetching data.')
 parser.add_argument('-o', '--outfile', type=str, default='trackobot_games.json',
                     help='The name of a file to store the json data for the games fetched from track-o-bot. '
                     + 'When run in fetch mode, always writes the data fetched.')
 parser.add_argument('-c', '--hero', type=str,
                     help='The hero class you want to analyze, e.g. Mage. If not specified all games will be analyzed with a simple summary.')
+parser.add_argument('-s', '--sample-size', type=int, default=0,
+                    help='The minimum sample size to require when displaying results for card related analyses. ' +
+                    'If not specified all data will be shown.')
 args = parser.parse_args()
 
 # Get the game data to analyze.
@@ -53,7 +56,7 @@ print('{:.2%} win percentage'.format(wins/(wins + losses)))
 if args.hero:
     print()
     print('--- Analyzing ' + args.hero + ' games ---')
-    hero = Hero(games, args.hero)
+    hero = Hero(games, args.hero, args.sample_size)
     hero.analyze_matchups()
     hero.analyze_cards()
     hero.analyze_openings()
