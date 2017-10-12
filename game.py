@@ -38,10 +38,16 @@ class Game(object):
         
     def won(self):
         return self.game_data['result'] == 'win'
+
+    def card_history(self, player='me'):
+        """Return an iterator for all the cards played by the specified player.
+            Defaults to the hero, 'me', specify 'opponent' for the opponent's cards.
+        """
+        return filter(lambda x : x['player'] == player, self.game_data['card_history'])
     
     def cards(self):
-        """Return the set of cards that the hero (not the opponent) played this game."""
-        return set(map(lambda y : y['card']['name'], filter(lambda x : x['player'] == 'me', self.game_data['card_history'])))
+        """Return the set of card names that the hero (not the opponent) played this game."""
+        return set(map(lambda y : y['card']['name'], self.card_history()))
 
     def cards_on_turn(self, turn: int):
         """Return a frozenset of cards that the hero played on the specified turn. The first turn is 1."""
@@ -56,4 +62,16 @@ class Game(object):
 
     def last_turn(self):
         """Find the last turn taken by the hero in this game."""
-        return max(map(lambda x: x['turn'], filter(lambda x: x['player'] == 'me', self.game_data['card_history'])), default=0)
+        return max(map(lambda x: x['turn'], self.card_history()), default=0)
+
+    def mana_spent(self, player='me'):
+        """Get the total mana spent by the specified player across all the turns in the game.
+            Defaults to the hero, 'me', specify 'opponent' for the opponent's mana spent.
+        """
+        return sum(map(lambda x: x['card']['mana'], self.card_history(player)))
+
+    def mana_differential(self):
+        """Get the differential between the mana spent by the hero and the opponent over the course of the game.
+            A negative number means the opponent spent more mana.
+        """
+        return self.mana_spent() - self.mana_spent('opponent')
