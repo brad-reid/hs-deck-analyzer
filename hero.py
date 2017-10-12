@@ -3,8 +3,8 @@ from pprint import pprint
 
 class Hero(object):
     """Analyze how a specific hero performs.
-        TODO: Look at making it easy to output tables for reddit.
-        tabulate supports tablefmt="mediawiki"
+        Output is preformatted for reddit.
+        For reddit formatting tips see: https://www.reddit.com/r/reddit.com/comments/6ewgt/reddit_markdown_primer_or_how_do_you_do_all_that/c03nik6/
     """
 
     def __init__(self, games: list, hero: str):
@@ -51,7 +51,12 @@ class Hero(object):
                           (opponent_data['wins'] / opponent_data['games']) * 100])
 
         print()
-        print(tabulate(table, headers=headers, floatfmt='.2f'))
+        print('## ' + self.hero + ' Matchup Win Rates')
+        print('Opponents are ordered by frequency, making it easy to see performance against the most common matchups.')
+        print("This data helps answer questions about how well your hero is performing against the meta you're facing ")
+        print("and how well you're performing against the opponents you are targeting.")
+        print()
+        print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt='pipe'))
 
     def analyze_cards(self):
         """Analyze how the cards played by hero fared against all opponents.
@@ -107,8 +112,13 @@ class Hero(object):
             card_table.append([card, card_data['games'], card_data['wins'], card_data['losses'], card_data['win percentage'],
                                card_data['unplayed wins'], card_data['unplayed losses'], card_data['unplayed percentage']])
 
+        # TODO: Maybe show the percentage of games, since you have to sort of keep in mind how many games we've played.
         print()
-        print(tabulate(card_table, headers=card_headers, floatfmt='.2f'))
+        print('## Card Win Rates')
+        print("Cards are ordered by win rate. Track-o-bot only has data for the cards played, so the unplayed columns are ")
+        print("attempting to help answer questions about how the deck performs when you don't draw that card or it sits in your hand.")
+        print()
+        print(tabulate(card_table, headers=card_headers, floatfmt='.2f', tablefmt='pipe'))
 
         # Print the card vs. specific opponent analysis.
         # Note that this data really starts to suffer from sparse data.
@@ -149,6 +159,12 @@ class Hero(object):
             else:
                 openings[opening]['losses'] += 1
 
+            # Sometimes we get a surprising result and want to print it out.
+            # In this case the opponent played a Dirty Rat which pulled out the Water Elemental.
+##            if 'Water Elemental' in opening[2]:
+##                print(game)
+##                pprint(game.game_data)
+
         for opening_data in openings.values():
             opening_data['win percentage'] = (opening_data['wins'] / opening_data['games']) * 100
 
@@ -162,7 +178,14 @@ class Hero(object):
                           opening_data['games'], opening_data['wins'], opening_data['losses'], opening_data['win percentage']])
 
         print()
-        print(tabulate(table, headers=headers, floatfmt='.2f'))
+        print('## Opening Sequence Win Rates')
+        print("Openings are your plays for the first 3 turns.")
+        print("This data attempts to help answer questions about what cards you should mulligan for and which play sequences are strongest.")
+        print("Unfortunately, this data is usually quite sparse.")
+        print()
+        print('Found ' + repr(len(openings)) + ' different openings in ' + repr(self.game_count) + ' games:')
+        print()
+        print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt='pipe'))
 
     def analyze_cards_by_turn(self, min_sample_size=5):
         """Analyze the win rates for the cards played on specific turns.
@@ -255,4 +278,4 @@ class Hero(object):
                           (mana_differentials[key]['wins'] / mana_differentials[key]['games']) * 100])
 
         print()
-        print(tabulate(table, headers=headers, floatfmt='.2f'))
+        print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt="pipe"))
