@@ -215,38 +215,44 @@ class Hero(object):
             the opponent spent each game. A negative differential means the opponent spent more mana.
         """
 
-        # TODO: Figure out more granular buckets, something along the lines of
-        # big disadvantage -8+
-        # slight disadvantage -3 to -7
-        # about even -2 to 2
-        # slight advantage 3 to 7
-        # big advantage 8+
-
-        # mana differential dictionary keyed by the differential e.g. -1, 0, 1, 2, ...
+        # mana differential dictionary keyed by differential buckets.
         mana_differentials = {}
+
+        # Provide a description of the 5 differential buckets.
+        keys = ['big disadvantage:          -8+',
+                'slight disadvantage: -7 to -3',
+                'about even:          -2 to  2',
+                'slight advantage:     3 to  7',
+                'big advantage:              8+']
 
         # Calculate the win rates for the mana differentials.
         for game in self.games:
             mana_differential = game.mana_differential()
-            if mana_differential > 10:
-                pprint(game.game_data['card_history'])
-            print(mana_differential)
-            mana_differentials[mana_differential] = mana_differentials.get(mana_differential, {'games': 0, 'wins': 0, 'losses': 0})
-            mana_differentials[mana_differential]['games'] += 1
+            key = keys[4]
+            if mana_differential < -7:
+                key = keys[0]
+            elif mana_differential < -2:
+                key = keys[1]
+            elif mana_differential < 2:
+                key = keys[2]
+            elif mana_differential < 8:
+                key = keys[3]
+
+            mana_differentials[key] = mana_differentials.get(key, {'games': 0, 'wins': 0, 'losses': 0})
+            mana_differentials[key]['games'] += 1
             if game.won():
-                mana_differentials[mana_differential]['wins'] += 1
+                mana_differentials[key]['wins'] += 1
             else:
-                mana_differentials[mana_differential]['losses'] += 1
+                mana_differentials[key]['losses'] += 1
 
         # Print the analysis.
         headers = ['mana differential', 'games', 'wins', 'losses', 'win %']
         table = []
 
-        pprint(mana_differentials)
-        # Sort by mana differential.
-        for differetial, differential_data in sorted(mana_differentials.items()):
-            table.append([differetial, differential_data['games'], differential_data['wins'], differential_data['losses'],
-                          (differential_data['wins'] / differential_data['games']) * 100])
+        # The differential bucket list is in display order.
+        for key in keys:
+            table.append([key, mana_differentials[key]['games'], mana_differentials[key]['wins'], mana_differentials[key]['losses'],
+                          (mana_differentials[key]['wins'] / mana_differentials[key]['games']) * 100])
 
         print()
         print(tabulate(table, headers=headers, floatfmt='.2f'))
