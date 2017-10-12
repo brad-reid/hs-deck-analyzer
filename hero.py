@@ -39,10 +39,18 @@ class Hero(object):
 
         self.game_count = self.wins + self.losses
 
+    def _valid(self):
+        """Test whether or not it's valid to perform an analysis for this hero."""
+        return bool(self.game_count)
+
     def analyze_matchups(self):
         """Analyze how this hero fared against all opponents.
             Summarize the deck's winrate as a whole and against each opponent hero encountered.
         """
+
+        if not self._valid():
+            print("Can't analyze " + self.hero)
+            return
 
         # All necessary calculations have already been done.
         # Print the matchup win rates.
@@ -70,6 +78,9 @@ class Hero(object):
             TODO: Make it easy to turn on/off the card vs. opponent winrates,
             maybe with a matchup threshold since this data can get very sparse.
         """
+
+        if not self._valid():
+            return
 
         # Card dictionary keyed by card name, value is a dict of win/loss data.
         cards = {}
@@ -108,7 +119,7 @@ class Hero(object):
                 unplayed_games = opponent_data['unplayed wins'] + opponent_data['unplayed losses']
                 opponent_data['unplayed percentage'] = 0 if unplayed_games == 0 else (opponent_data['unplayed wins'] / (unplayed_games)) * 100
             
-        card_headers = ['card vs. All', 'games', 'wins', 'losses', 'win %', 'unplayed wins', 'unplayed losses', 'unplayed %']
+        card_headers = ['card vs. All', 'wins', 'win %', 'games', 'played %', 'unplayed wins', 'unplayed losses', 'unplayed win %']
         card_table = []
         # Sort cards by best win percentage.
         cards_by_win_percent = []
@@ -118,13 +129,15 @@ class Hero(object):
             if card_data['games'] < self.min_sample_size:
                 continue
             cards_by_win_percent.append(card)
-            card_table.append([card, card_data['games'], card_data['wins'], card_data['losses'], card_data['win percentage'],
+            card_table.append([card, card_data['wins'], card_data['win percentage'],
+                               card_data['games'], (card_data['games'] / self.game_count) * 100,
                                card_data['unplayed wins'], card_data['unplayed losses'], card_data['unplayed percentage']])
 
         # TODO: Maybe show the percentage of games, since you have to sort of keep in mind how many games we've played.
         print()
         print('## Card Win Rates')
-        print("Cards are ordered by win rate. Track-o-bot only has data for the cards played, so the unplayed columns are ")
+        print("Cards are ordered by win rate. Played % shows the percentage of games where you played the card.")
+        print("Track-o-bot only has data for the cards played, so the unplayed columns are ")
         print("attempting to help answer questions about how the deck performs when you don't draw that card or it sits in your hand.")
         print("Note that data is only shown when a card is played on a turn at least " + repr(self.min_sample_size) + " times.")
         print()
@@ -155,6 +168,9 @@ class Hero(object):
         """Analyze how the various turn 1, 2, 3 openings fared.
             Summarize the various opening win rates, ordered by the plays rather than win rates.
         """
+
+        if not self._valid():
+            return
 
         # Openings dictionary keyed by a turn 1-3 tuple of the cards played on those turn, value is a dict of win/loss data.
         openings = {}
@@ -201,6 +217,9 @@ class Hero(object):
         """Analyze the win rates for the cards played on specific turns.
             This also suffers from sparse data and uses the hero's min sample size.
         """
+
+        if not self._valid():
+            return
 
         # Turns dictionary keyed by the turn number e.g. 1, 2, 3.
         turns = {}
@@ -252,6 +271,9 @@ class Hero(object):
             the opponent spent each game. A negative differential means the opponent spent more mana.
         """
 
+        if not self._valid():
+            return
+
         # mana differential dictionary keyed by differential buckets.
         mana_differentials = {}
 
@@ -283,17 +305,19 @@ class Hero(object):
                 mana_differentials[key]['losses'] += 1
 
         # Print the analysis.
-        headers = ['mana differential', 'games', 'wins', 'losses', 'win %']
+        headers = ['mana differential', 'games', 'games %', 'wins', 'losses', 'win %']
         table = []
 
         # The differential bucket list is in display order.
         for key in keys:
-            table.append([key, mana_differentials[key]['games'], mana_differentials[key]['wins'], mana_differentials[key]['losses'],
+            table.append([key, mana_differentials[key]['games'], (mana_differentials[key]['games'] / self.game_count) * 100,
+                          mana_differentials[key]['wins'], mana_differentials[key]['losses'],
                           (mana_differentials[key]['wins'] / mana_differentials[key]['games']) * 100])
 
         print()
         print('## Mana Differential Win Rates')
         print("This is the difference in mana spent between you and your opponent.")
+        print("Game % shows the percentage of games where this mana differential occurred.")
         print("Note that the game winner will usually take the last turn, which probably helps pad the mana spent in their favor.")
         print()
         print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt="pipe"))
