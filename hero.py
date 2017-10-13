@@ -170,6 +170,33 @@ class Hero(object):
             print()
             print(tabulate(card_table, headers=card_headers, floatfmt='.2f', tablefmt='pipe'))
 
+        # Print a win rate summary of all cards against all opponents.
+        # Generate the headers, ordered by opponent frequency.
+        headers = ['Card', 'All (' + repr(self.game_count) + ')']
+        opponents_by_frequency = []
+        for opponent, opponent_data in sorted(self.opponents.items(), key=lambda k_v: k_v[1]['games'], reverse=True):
+            opponents_by_frequency.append(opponent)
+            headers.append(opponent + ' (' + repr(self.opponents[opponent]['games']) + ')')
+
+        table = []
+        for card in cards_by_win_percent:
+            card_row = [card, cards[card]['win percentage']]
+
+            for opponent in opponents_by_frequency:
+                # Not every card will have been played against every opponent.
+                if not opponent in cards[card]['opponents']:
+                    card_row.append(None)
+                else:
+                    card_row.append(cards[card]['opponents'][opponent]['win percentage'])
+            table.append(card_row)
+
+        print()
+        print('## Card Win Rate Summary')
+        print('Summarize the win rates of the cards against all opponents.')
+        print("Cards are ordered by win rate, opponents are ordered by frequency and show the game count in parentheses.")
+        print()
+        print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt='pipe'))
+
     def analyze_openings(self):
         """Analyze how the various turn 1, 2, 3 openings fared.
             Summarize the various opening win rates, ordered by the plays rather than win rates.

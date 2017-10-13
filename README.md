@@ -162,6 +162,35 @@ Note that data is only shown when a card is played on a turn at least 5 times.
 | Backstab             |      1 |   16.67 |       6 |      54.55 |               5 |                 0 |           100.00 |
 | Flame Elemental      |      1 |   20.00 |       5 |      45.45 |               5 |                 1 |            83.33 |
 
+## Card Win Rate Summary
+Summarize the win rates of the cards against all opponents.
+Cards are ordered by win rate, opponents are ordered by frequency and show the game count in parentheses.
+
+| Card                 |   All (50) |   Rogue (15) |   Priest (11) |   Warlock (8) |   Druid (7) |   Shaman (4) |   Hunter (2) |   Mage (2) |   Warrior (1) |
+|:---------------------|-----------:|-------------:|--------------:|--------------:|------------:|-------------:|-------------:|-----------:|--------------:|
+| Leeroy Jenkins       |      91.67 |        75.00 |        100.00 |        100.00 |      100.00 |       100.00 |              |            |               |
+| Shadowstep           |      69.23 |        80.00 |         33.33 |        100.00 |        0.00 |       100.00 |              |     100.00 |               |
+| Southsea Deckhand    |      62.86 |        54.55 |         42.86 |         57.14 |      100.00 |       100.00 |       100.00 |     100.00 |          0.00 |
+| The Coin             |      60.87 |        71.43 |         60.00 |         33.33 |       66.67 |        66.67 |         0.00 |     100.00 |               |
+| Naga Corsair         |      60.00 |        75.00 |         50.00 |        100.00 |       33.33 |        50.00 |              |     100.00 |               |
+| SI:7 Agent           |      60.00 |        60.00 |         55.56 |         50.00 |       75.00 |        75.00 |        50.00 |            |               |
+| Southsea Captain     |      59.38 |        60.00 |         62.50 |         42.86 |      100.00 |        50.00 |       100.00 |     100.00 |          0.00 |
+| Cobalt Scalebane     |      59.09 |        71.43 |         33.33 |         66.67 |       60.00 |              |              |     100.00 |               |
+| Eviscerate           |      57.14 |        57.14 |         40.00 |         50.00 |      100.00 |        50.00 |              |     100.00 |               |
+| Edwin VanCleef       |      57.14 |        66.67 |         33.33 |        100.00 |        0.00 |              |       100.00 |            |               |
+| Prince Valanar       |      57.14 |        50.00 |        100.00 |          0.00 |      100.00 |              |              |            |          0.00 |
+| Patches the Pirate   |      56.00 |        53.33 |         54.55 |         50.00 |       57.14 |        75.00 |        50.00 |     100.00 |          0.00 |
+| Dagger Mastery       |      55.10 |        50.00 |         54.55 |         50.00 |       57.14 |        75.00 |        50.00 |     100.00 |          0.00 |
+| Shaku, the Collector |      54.55 |         0.00 |          0.00 |         75.00 |       50.00 |       100.00 |         0.00 |     100.00 |               |
+| Bonemare             |      53.85 |       100.00 |         40.00 |         50.00 |      100.00 |         0.00 |              |            |               |
+| Swashburglar         |      52.63 |        61.54 |         50.00 |         40.00 |       40.00 |        75.00 |        50.00 |            |          0.00 |
+| Cold Blood           |      52.63 |        60.00 |         25.00 |         33.33 |       50.00 |       100.00 |       100.00 |     100.00 |          0.00 |
+| Fire Fly             |      50.00 |        46.15 |         37.50 |         50.00 |       60.00 |        50.00 |        50.00 |     100.00 |               |
+| Golakka Crawler      |      48.15 |        57.14 |         28.57 |         60.00 |       66.67 |         0.00 |        50.00 |     100.00 |          0.00 |
+| Vilespine Slayer     |      47.83 |        71.43 |         20.00 |         50.00 |       50.00 |        50.00 |              |            |          0.00 |
+| Backstab             |      44.83 |        55.56 |         16.67 |         50.00 |       33.33 |        66.67 |         0.00 |     100.00 |               |
+| Flame Elemental      |      40.00 |        42.86 |         20.00 |         40.00 |       33.33 |         0.00 |        50.00 |     100.00 |               |
+
 ## Opening Sequence Win Rates
 Openings are your plays for the first 3 turns.
 This data attempts to help answer questions about what cards you should mulligan for and which play sequences are strongest.
