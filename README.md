@@ -31,6 +31,27 @@ https://git-scm.com/downloads
 
 TODO
 
+### Running
+
+Run using data fetched from Track-o-bot:
+```
+> py hs-deck-analyzer.py -u little-tundra-rhino-2171 -t <API_TOKEN> -c Rogue -s 5
+```
+
+Run using game data stored in a json file:
+```
+> py hs-deck-analyzer.py -i trackobot_games.json -c Rogue -s 5
+```
+
+### Caveats
+
+The Track-o-bot deck recognition is behind the times, which makes it useless. Because of that, the script only recognizes the hero classes, not specific decks.
+If you play multiple archetypes for the same hero, this might make the analysis less useful, especially if there's a lot of card overlap.
+Since opponents are only listed by hero and not deck type, when looking at results you also have to keep in mind what kind of decks you were facing.
+
+The script only gets data for the last 10 days since the Track-o-bot data store ages out the card history data after 10 days.
+You'll need to store the Track-o-bot data that includes the card history yourself if you want to be able to analyze it again in the future.
+
 ## Additional Resources
 
 * [/r/CompetitiveHS](https://www.reddit.com/r/CompetitiveHS/) - Discuss high level game play and deck building.
