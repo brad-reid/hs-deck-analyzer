@@ -33,10 +33,24 @@ TODO
 
 ## Additional Resources
 
-TODO: Add links and descriptions for other available tools and websites that help analyze decks and game play.
+* [/r/CompetitiveHS](https://www.reddit.com/r/CompetitiveHS/) - Discuss high level game play and deck building.
+* [Hearthstone Deck Tracker](https://hsdecktracker.net/) - If you aren't playing with a deck tracker, you really should. Offers many features, including the ability to view replays of your games.
+* [HSReplay.net](https://hsreplay.net/) - Shares decks and data collected from players using the HS Deck Tracker.
+* [McHammar's Deck Evolver](https://deckoptimizer.herokuapp.com/) - Performs card win rate analysis for your decks. The main inspiration for this script.
+* [Vicious Syndicate](https://www.vicioussyndicate.com) - They generate a weekly report on the meta using Track-o-bot data. Be sure to share your Track-o-bot data with them.
+* [VS Data Reaper Live Report](https://www.vicioussyndicate.com/data-reaper-live-beta/) - Get a 24 hour view of what the meta looks like at all levels of play.
+* [HSTeamPlay](https://github.com/frogstack/HSTeamPlay) - A script that uses the Microsoft TrueSkill rating system to analyze the cards in your deck like a team.
 
 ## TODO/Wishlist
-TODO: Add details about things I'd like to do. Unfortunately most of this stuff is larger than just this tool.
+
+* Deck identification. Ideally we'd be able to track decks by deck code.
+* Deck level breakdowns. The main limiting factor I see is the low quality deck detection that's currently in track-o-bot. Very few of the current meta decks are currently supported.
+* Deck versioning support. Decks usually go through several iterations.
+   Being able to classify and analyze the different versions would be nice. You can sort of get there by hand classifying decks in Track-o-bot.
+   Maybe making use of the game annotation system in Track-o-bot would work.
+* Get Track-o-bot to store more data like, mulligan info and cards drawn. This would open up new analyses.
+* HSTeamPlay integration. There are several challenges here. It can only analyze data by watching your game log. It is written in go, but there is a [python trueskill](http://trueskill.org/) package.
+* Make it even easier for players to use. Having to install python and run the script by hand will be a barrier for some players. Maybe hosted as a web app somewhere? Maybe as a HS Deck Tracker plugin?
 
 ## License
 
@@ -97,6 +111,58 @@ Note that data is only shown when a card is played on a turn at least 5 times.
 | Vilespine Slayer     |     11 |   47.83 |      23 |      46.00 |              17 |                10 |            62.96 |
 | Backstab             |     13 |   44.83 |      29 |      58.00 |              15 |                 6 |            71.43 |
 | Flame Elemental      |     10 |   40.00 |      25 |      50.00 |              18 |                 7 |            72.00 |
+
+15 games against Rogue
+| card vs. Rogue       |   wins |   win % |   games |   played % |   unplayed wins |   unplayed losses |   unplayed win % |
+|:---------------------|-------:|--------:|--------:|-----------:|----------------:|------------------:|-----------------:|
+| Leeroy Jenkins       |      3 |   75.00 |       4 |      26.67 |               5 |                 6 |            45.45 |
+| Shadowstep           |      4 |   80.00 |       5 |      33.33 |               4 |                 6 |            40.00 |
+| Southsea Deckhand    |      6 |   54.55 |      11 |      73.33 |               2 |                 2 |            50.00 |
+| The Coin             |      5 |   71.43 |       7 |      46.67 |               3 |                 5 |            37.50 |
+| Naga Corsair         |      3 |   75.00 |       4 |      26.67 |               5 |                 6 |            45.45 |
+| SI:7 Agent           |      6 |   60.00 |      10 |      66.67 |               2 |                 3 |            40.00 |
+| Southsea Captain     |      6 |   60.00 |      10 |      66.67 |               2 |                 3 |            40.00 |
+| Cobalt Scalebane     |      5 |   71.43 |       7 |      46.67 |               3 |                 5 |            37.50 |
+| Eviscerate           |      4 |   57.14 |       7 |      46.67 |               4 |                 4 |            50.00 |
+| Edwin VanCleef       |      4 |   66.67 |       6 |      40.00 |               4 |                 5 |            44.44 |
+| Prince Valanar       |      1 |   50.00 |       2 |      13.33 |               7 |                 6 |            53.85 |
+| Patches the Pirate   |      8 |   53.33 |      15 |     100.00 |               0 |                 0 |             0.00 |
+| Dagger Mastery       |      7 |   50.00 |      14 |      93.33 |               1 |                 0 |           100.00 |
+| Shaku, the Collector |      0 |    0.00 |       1 |       6.67 |               8 |                 6 |            57.14 |
+| Bonemare             |      1 |  100.00 |       1 |       6.67 |               7 |                 7 |            50.00 |
+| Cold Blood           |      3 |   60.00 |       5 |      33.33 |               5 |                 5 |            50.00 |
+| Swashburglar         |      8 |   61.54 |      13 |      86.67 |               0 |                 2 |             0.00 |
+| Fire Fly             |      6 |   46.15 |      13 |      86.67 |               2 |                 0 |           100.00 |
+| Golakka Crawler      |      4 |   57.14 |       7 |      46.67 |               4 |                 4 |            50.00 |
+| Vilespine Slayer     |      5 |   71.43 |       7 |      46.67 |               3 |                 5 |            37.50 |
+| Backstab             |      5 |   55.56 |       9 |      60.00 |               3 |                 3 |            50.00 |
+| Flame Elemental      |      3 |   42.86 |       7 |      46.67 |               5 |                 3 |            62.50 |
+
+11 games against Priest
+| card vs. Priest      |   wins |   win % |   games |   played % |   unplayed wins |   unplayed losses |   unplayed win % |
+|:---------------------|-------:|--------:|--------:|-----------:|----------------:|------------------:|-----------------:|
+| Leeroy Jenkins       |      4 |  100.00 |       4 |      36.36 |               2 |                 5 |            28.57 |
+| Shadowstep           |      1 |   33.33 |       3 |      27.27 |               5 |                 3 |            62.50 |
+| Southsea Deckhand    |      3 |   42.86 |       7 |      63.64 |               3 |                 1 |            75.00 |
+| The Coin             |      3 |   60.00 |       5 |      45.45 |               3 |                 3 |            50.00 |
+| Naga Corsair         |      2 |   50.00 |       4 |      36.36 |               4 |                 3 |            57.14 |
+| SI:7 Agent           |      5 |   55.56 |       9 |      81.82 |               1 |                 1 |            50.00 |
+| Southsea Captain     |      5 |   62.50 |       8 |      72.73 |               1 |                 2 |            33.33 |
+| Cobalt Scalebane     |      2 |   33.33 |       6 |      54.55 |               4 |                 1 |            80.00 |
+| Eviscerate           |      2 |   40.00 |       5 |      45.45 |               4 |                 2 |            66.67 |
+| Edwin VanCleef       |      1 |   33.33 |       3 |      27.27 |               5 |                 3 |            62.50 |
+| Prince Valanar       |      2 |  100.00 |       2 |      18.18 |               4 |                 5 |            44.44 |
+| Patches the Pirate   |      6 |   54.55 |      11 |     100.00 |               0 |                 0 |             0.00 |
+| Dagger Mastery       |      6 |   54.55 |      11 |     100.00 |               0 |                 0 |             0.00 |
+| Shaku, the Collector |      0 |    0.00 |       1 |       9.09 |               6 |                 4 |            60.00 |
+| Bonemare             |      2 |   40.00 |       5 |      45.45 |               4 |                 2 |            66.67 |
+| Cold Blood           |      1 |   25.00 |       4 |      36.36 |               5 |                 2 |            71.43 |
+| Swashburglar         |      4 |   50.00 |       8 |      72.73 |               2 |                 1 |            66.67 |
+| Fire Fly             |      3 |   37.50 |       8 |      72.73 |               3 |                 0 |           100.00 |
+| Golakka Crawler      |      2 |   28.57 |       7 |      63.64 |               4 |                 0 |           100.00 |
+| Vilespine Slayer     |      1 |   20.00 |       5 |      45.45 |               5 |                 1 |            83.33 |
+| Backstab             |      1 |   16.67 |       6 |      54.55 |               5 |                 0 |           100.00 |
+| Flame Elemental      |      1 |   20.00 |       5 |      45.45 |               5 |                 1 |            83.33 |
 
 ## Opening Sequence Win Rates
 Openings are your plays for the first 3 turns.
@@ -212,3 +278,14 @@ Note that the game winner will usually take the last turn, which probably helps 
 | about even:          -2 to  2  |      10 |     20.00 |      8 |        2 |   80.00 |
 | slight advantage:     3 to  7  |      15 |     30.00 |     13 |        2 |   86.67 |
 | big advantage:              8+ |       5 |     10.00 |      4 |        1 |   80.00 |
+
+## Ladder Rank Win Rates
+This shows how the hero performed at the different ladder ranks.
+This should help you gauge whether or not games at easier ranks are affecting the stats.
+
+|   ladder rank |   games |   wins |   losses |   win % |
+|--------------:|--------:|-------:|---------:|--------:|
+|            10 |       6 |      5 |        1 |   83.33 |
+|             9 |      11 |      9 |        2 |   81.82 |
+|             8 |      33 |     14 |       19 |   42.42 |
+

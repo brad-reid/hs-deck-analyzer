@@ -78,8 +78,7 @@ class Hero(object):
             Summarize the card winrates as a whole. Some cards can suffer from sparse data,
             especially if you are playing a deck that can pull in random cards.
             The output uses the hero's min sample size.
-            TODO: Make it easy to turn on/off the card vs. opponent winrates,
-            maybe with a matchup threshold since this data can get very sparse.
+            Also performs per opponent analyses for opponents that were at least 10% of your games.
         """
 
         if not self._valid():
@@ -136,7 +135,6 @@ class Hero(object):
                                card_data['games'], (card_data['games'] / self.game_count) * 100,
                                card_data['unplayed wins'], card_data['unplayed losses'], card_data['unplayed percentage']])
 
-        # TODO: Maybe show the percentage of games, since you have to sort of keep in mind how many games we've played.
         print()
         print('## Card Win Rates')
         print("Cards are ordered by win rate. Played % shows the percentage of games where you played the card.")
@@ -148,24 +146,29 @@ class Hero(object):
 
         # Print the card vs. specific opponent analysis.
         # Note that this data really starts to suffer from sparse data.
-        # TODO: make it easy to opt in/out of printing this.
-        if False:
-            for opponent in self.opponents.keys():
-                card_headers = ['card vs. ' + opponent, 'games', 'wins', 'losses', 'win %', 'unplayed wins', 'unplayed losses', 'unplayed %']
-                card_table = []
-                for card in cards_by_win_percent:
-                    # Not every card will have been played against every opponent.
-                    if not opponent in cards[card]['opponents']:
-                        continue
-                    card_opponent_data = cards[card]['opponents'][opponent]
-                    if card_opponent_data is None:
-                        continue
-                    card_table.append([card, card_opponent_data['games'], card_opponent_data['wins'], card_opponent_data['losses'],
-                                       card_opponent_data['win percentage'], card_opponent_data['unplayed wins'],
-                                       card_opponent_data['unplayed losses'], card_opponent_data['unplayed percentage']])
-                
-                print()
-                print(tabulate(card_table, headers=card_headers, floatfmt='.2f'))
+        # For now, just show data for opponents that showed up in more than 10% of the games.
+        for opponent in self.opponents.keys():
+            opponent_game_count = self.opponents[opponent]['games']
+            if opponent_game_count < self.game_count * .1:
+                continue
+
+            card_headers = ['card vs. ' + opponent, 'wins', 'win %', 'games', 'played %', 'unplayed wins', 'unplayed losses', 'unplayed win %']
+            card_table = []
+            for card in cards_by_win_percent:
+                # Not every card will have been played against every opponent.
+                if not opponent in cards[card]['opponents']:
+                    continue
+                card_opponent_data = cards[card]['opponents'][opponent]
+                if card_opponent_data is None:
+                    continue
+                card_table.append([card, card_opponent_data['wins'], card_opponent_data['win percentage'],
+                                   card_opponent_data['games'], (card_opponent_data['games'] / opponent_game_count) * 100,
+                                   card_opponent_data['unplayed wins'], card_opponent_data['unplayed losses'],
+                                   card_opponent_data['unplayed percentage']])
+
+            print()
+            print(repr(opponent_game_count) + ' games against ' + opponent)
+            print(tabulate(card_table, headers=card_headers, floatfmt='.2f', tablefmt='pipe'))
 
     def analyze_openings(self):
         """Analyze how the various turn 1, 2, 3 openings fared.
