@@ -62,6 +62,7 @@ if args.hero:
     hero.analyze_openings()
     hero.analyze_cards_by_turn()
     hero.analyze_mana()
+    hero.analyze_games_by_rank()
 
 
 

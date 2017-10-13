@@ -27,6 +27,22 @@ class Game(object):
     def date(self):
         return self.game_data['added']
 
+    @property
+    def rank(self):
+        """Return the rank that this game was played at. If the game was not played in ranked mode,
+            or track-o-bot doesn't have the rank, returns '26' since that's higher than the highest rank.
+            Legend games are ranked as rank 0.
+        """
+        if self.ranked():
+            # TODO: Validate how legend games appear, my data shows the legend field always empty.
+            if self.game_data['legend']:
+                return 0
+            else:
+                # Sometimes track-o-bot just doesn't have the rank data.
+                return self.game_data['rank'] or 26
+        else:
+            return 26
+
     # Simplify the result to W/L
     # What about draws?
     @property
@@ -38,6 +54,12 @@ class Game(object):
         
     def won(self):
         return self.game_data['result'] == 'win'
+
+    def ranked(self):
+        return self.game_data['mode'] == 'ranked'
+
+    def had_played_cards(self):
+        return bool(self.game_data['card_history'])
 
     def card_history(self, player='me'):
         """Return an iterator for all the cards played by the specified player.

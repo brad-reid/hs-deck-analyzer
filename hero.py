@@ -9,6 +9,7 @@ class Hero(object):
 
     def __init__(self, games: list, hero: str, min_sample_size=0):
         """Create a new hero given a list of games and a hero.
+            Games only count if they are ranked and some cards were played.
             If a minimum sample size is added, the card related analyses will only show data if there
             are at least that many results in the sample.
         """
@@ -22,7 +23,9 @@ class Hero(object):
         self.opponents = {}
 
         # Perform initial calculations that get used by multiple analyses.
-        for game in filter(lambda x: x.hero == hero, games):
+        # Only look at ranked games where cards were played.
+        # TODO: To filter standard vs. wild you have to look at the cards.
+        for game in filter(lambda x: x.hero == hero and x.ranked() and x.had_played_cards(), games):
             self.games.append(game)
             if game.won():
                 self.wins += 1
@@ -319,5 +322,44 @@ class Hero(object):
         print("This is the difference in mana spent between you and your opponent.")
         print("Game % shows the percentage of games where this mana differential occurred.")
         print("Note that the game winner will usually take the last turn, which probably helps pad the mana spent in their favor.")
+        print()
+        print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt="pipe"))
+
+    def analyze_games_by_rank(self):
+        """Analyze the win rates for the deck at the different levels of ranked ladder play.
+            TODO: Validate how legend games show up.
+            TODO: Make it possible to ignore games above certain ranks.
+        """
+
+        if not self._valid():
+            return
+
+        # Ranks dictionary keyed by ladder rank.
+        ranks = {}
+
+        # Calculate the win rates for the various ranks.
+        for game in self.games:
+            rank = game.rank
+
+            ranks[rank] = ranks.get(rank, {'games': 0, 'wins': 0, 'losses': 0})
+            ranks[rank]['games'] += 1
+            if game.won():
+                ranks[rank]['wins'] += 1
+            else:
+                ranks[rank]['losses'] += 1
+
+        # Print the analysis.
+        headers = ['ladder rank', 'games', 'wins', 'losses', 'win %']
+        table = []
+
+        # Sort by rank in ladder order, high ranks first.
+        for rank, rank_data in sorted(ranks.items(), reverse=True):
+            table.append([rank, rank_data['games'], rank_data['wins'], rank_data['losses'],
+                          (rank_data['wins'] / rank_data['games']) * 100])
+
+        print()
+        print('## Ladder Rank Win Rates')
+        print("This shows how the hero performed at the different ladder ranks.")
+        print("This should help you gauge whether or not games at easier ranks are affecting the stats.")
         print()
         print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt="pipe"))
