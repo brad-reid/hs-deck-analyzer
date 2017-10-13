@@ -164,7 +164,7 @@ Note that data is only shown when a card is played on a turn at least 5 times.
 
 ## Card Win Rate Summary
 Summarize the win rates of the cards against all opponents.
-Cards are ordered by win rate, opponents are ordered by frequency and show the game count in parentheses.
+Cards are ordered by their overall win rate, opponents are ordered by frequency and show the game count in parentheses.
 
 | Card                 |   All (50) |   Rogue (15) |   Priest (11) |   Warlock (8) |   Druid (7) |   Shaman (4) |   Hunter (2) |   Mage (2) |   Warrior (1) |
 |:---------------------|-----------:|-------------:|--------------:|--------------:|------------:|-------------:|-------------:|-----------:|--------------:|

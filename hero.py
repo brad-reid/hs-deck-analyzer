@@ -193,7 +193,7 @@ class Hero(object):
         print()
         print('## Card Win Rate Summary')
         print('Summarize the win rates of the cards against all opponents.')
-        print("Cards are ordered by win rate, opponents are ordered by frequency and show the game count in parentheses.")
+        print("Cards are ordered by their overall win rate, opponents are ordered by frequency and show the game count in parentheses.")
         print()
         print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt='pipe'))
 
