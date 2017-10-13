@@ -112,8 +112,7 @@ Note that data is only shown when a card is played on a turn at least 5 times.
 | Backstab             |     13 |   44.83 |      29 |      58.00 |              15 |                 6 |            71.43 |
 | Flame Elemental      |     10 |   40.00 |      25 |      50.00 |              18 |                 7 |            72.00 |
 
-15 games against Rogue
-| card vs. Rogue       |   wins |   win % |   games |   played % |   unplayed wins |   unplayed losses |   unplayed win % |
+| 15 games vs. Rogue   |   wins |   win % |   games |   played % |   unplayed wins |   unplayed losses |   unplayed win % |
 |:---------------------|-------:|--------:|--------:|-----------:|----------------:|------------------:|-----------------:|
 | Leeroy Jenkins       |      3 |   75.00 |       4 |      26.67 |               5 |                 6 |            45.45 |
 | Shadowstep           |      4 |   80.00 |       5 |      33.33 |               4 |                 6 |            40.00 |
@@ -138,8 +137,7 @@ Note that data is only shown when a card is played on a turn at least 5 times.
 | Backstab             |      5 |   55.56 |       9 |      60.00 |               3 |                 3 |            50.00 |
 | Flame Elemental      |      3 |   42.86 |       7 |      46.67 |               5 |                 3 |            62.50 |
 
-11 games against Priest
-| card vs. Priest      |   wins |   win % |   games |   played % |   unplayed wins |   unplayed losses |   unplayed win % |
+| 11 games vs. Priest  |   wins |   win % |   games |   played % |   unplayed wins |   unplayed losses |   unplayed win % |
 |:---------------------|-------:|--------:|--------:|-----------:|----------------:|------------------:|-----------------:|
 | Leeroy Jenkins       |      4 |  100.00 |       4 |      36.36 |               2 |                 5 |            28.57 |
 | Shadowstep           |      1 |   33.33 |       3 |      27.27 |               5 |                 3 |            62.50 |

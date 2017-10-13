@@ -152,7 +152,8 @@ class Hero(object):
             if opponent_game_count < self.game_count * .1:
                 continue
 
-            card_headers = ['card vs. ' + opponent, 'wins', 'win %', 'games', 'played %', 'unplayed wins', 'unplayed losses', 'unplayed win %']
+            card_headers = [repr(opponent_game_count) + ' games vs. ' + opponent,
+                            'wins', 'win %', 'games', 'played %', 'unplayed wins', 'unplayed losses', 'unplayed win %']
             card_table = []
             for card in cards_by_win_percent:
                 # Not every card will have been played against every opponent.
@@ -167,7 +168,6 @@ class Hero(object):
                                    card_opponent_data['unplayed percentage']])
 
             print()
-            print(repr(opponent_game_count) + ' games against ' + opponent)
             print(tabulate(card_table, headers=card_headers, floatfmt='.2f', tablefmt='pipe'))
 
     def analyze_openings(self):
