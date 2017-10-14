@@ -1,5 +1,4 @@
 from tabulate import tabulate
-from pprint import pprint
 
 class Hero(object):
     """Analyze how a specific hero performs.
@@ -217,12 +216,6 @@ class Hero(object):
                 openings[opening]['wins'] += 1
             else:
                 openings[opening]['losses'] += 1
-
-            # Sometimes we get a surprising result and want to print it out.
-            # In this case the opponent played a Dirty Rat which pulled out the Water Elemental.
-##            if 'Water Elemental' in opening[2]:
-##                print(game)
-##                pprint(game.game_data)
 
         for opening_data in openings.values():
             opening_data['win percentage'] = (opening_data['wins'] / opening_data['games']) * 100
