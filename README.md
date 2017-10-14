@@ -17,7 +17,7 @@ https://trackobot.com/
 
 #### Python
 
-You'll need to install python on your system if you don't have it already.
+You'll need to install python 3 on your system if you don't have it already.
 For details on downloading and installing python, visit:
 https://www.python.org/downloads/
 
@@ -29,7 +29,22 @@ https://git-scm.com/downloads
 
 ### Installing
 
-TODO
+Assuming you've met the prerequisites and have both Python and Git installed, from a command prompt:
+* Navigate to the directory where you want to install it.
+* git clone https://github.com/brad-reid/hs-deck-analyzer.git
+* cd hs-deck-analyzer
+* pip install -r requirements.txt
+
+At this point it should be runnable. Get your Track-o-bot username and API token. If you've never done this before, here are
+instructions for Windows:
+* Find the Track-o-bot icon in your system tray if it is running. If it's not running, run it.
+* Right click on it and choose 'Open Profile' which takes you to your Track-o-bot web page.
+* Click on the gear icon dropdown, on the upper right nav for the page, and choose 'API'.
+* Click the 'Reveal' button to find your API token.
+
+Now you're ready to run the script. If you're on windows, you may need to add python to your PATH environment variable.
+The [python windows installation guide](https://docs.python.org/3/using/windows.html) has some instructions for
+[configuring python and finding the python executable](https://docs.python.org/3/using/windows.html#finding-the-python-executable)
 
 ### Running
 
