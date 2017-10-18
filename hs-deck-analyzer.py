@@ -21,6 +21,8 @@ parser.add_argument('-c', '--hero', type=str,
 parser.add_argument('-s', '--sample-size', type=int, default=0,
                     help='The minimum sample size to require when displaying results for card related analyses. ' +
                     'If not specified all data will be shown.')
+parser.add_argument('-d', '--days', type=int, default=10,
+                    help='The maximum number of days worth of data to fetch. Will not fetch more than 10 days.')
 args = parser.parse_args()
 
 # Get the game data to analyze.
@@ -33,7 +35,7 @@ if args.infile:
             print(games[-1])
 elif args.username and args.token:
     print('Fetching game data from Track-o-bot for ' + args.username)
-    trackobot = Trackobot(args.username, args.token)
+    trackobot = Trackobot(args.username, args.token, args.days)
     games = trackobot.get_game_history(args.outfile)
 else:
     parser.print_help()

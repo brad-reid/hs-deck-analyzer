@@ -22,9 +22,10 @@ class Hero(object):
         self.opponents = {}
 
         # Perform initial calculations that get used by multiple analyses.
-        # Only look at ranked games where cards were played.
+        # Only look at games where cards were played.
+        # TODO: Only look at ranked games. Unfortunately Track-o-bot bugs sometimes and doesn't record ranked games as ranked.
         # TODO: To filter standard vs. wild you have to look at the cards.
-        for game in filter(lambda x: x.hero == hero and x.ranked() and x.had_played_cards(), games):
+        for game in filter(lambda x: x.hero == hero and x.had_played_cards(), games):
             self.games.append(game)
             if game.won():
                 self.wins += 1
@@ -336,6 +337,9 @@ class Hero(object):
 
         # The differential bucket list is in display order.
         for key in keys:
+            if key not in mana_differentials:
+                continue
+
             table.append([key, mana_differentials[key]['games'], (mana_differentials[key]['games'] / self.game_count) * 100,
                           mana_differentials[key]['wins'], mana_differentials[key]['losses'],
                           (mana_differentials[key]['wins'] / mana_differentials[key]['games']) * 100])

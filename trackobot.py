@@ -15,10 +15,13 @@ class Trackobot(object):
 
     """
 
-    def __init__(self, user: str, token: str):
-        """Create a new track-o-bot interface for the given user and API token."""
+    def __init__(self, user: str, token: str, days=10):
+        """Create a new track-o-bot interface for the given user, API token and number of days.
+            Track-o-bot only stores card history for 10 days, so only retrieves a max of 10 days of data.
+        """
         self.user = user
         self.token = token
+        self.days = days if days <= 10 else 10
 
     def get_game_history(self, outfile: str):
         """Get the last 10 days of game data from Track-o-bot.
@@ -30,7 +33,7 @@ class Trackobot(object):
 
         # Get all the pertinent track-o-bot games.
         # Track-o-bot only has per card data from the last 10 days.
-        ten_days_ago = datetime.datetime.now() - datetime.timedelta(days=10)
+        ten_days_ago = datetime.datetime.now() - datetime.timedelta(days=self.days)
         found_last_game = False
         games_json = []
         games = []
@@ -45,7 +48,7 @@ class Trackobot(object):
                 game = Game(g)
                 print(game)
                 if game.date < ten_days_ago.isoformat():
-                    print('Done getting games from the last 10 days.')
+                    print('Done getting games from the last ' + repr(self.days) + ' days.')
                     found_last_game = True
                     break
                 else:
