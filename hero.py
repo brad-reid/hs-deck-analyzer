@@ -41,6 +41,7 @@ class Hero(object):
                 self.opponents[opponent]['losses'] += 1
 
         self.game_count = self.wins + self.losses
+        self.win_percentage = (self.wins / self.game_count) * 100
 
     def _valid(self):
         """Test whether or not it's valid to perform an analysis for this hero."""
@@ -58,7 +59,7 @@ class Hero(object):
         # All necessary calculations have already been done.
         # Print the matchup win rates.
         headers = ['opponent', 'games', 'wins', 'losses', 'win %']
-        table = [['All', self.game_count, self.wins, self.losses, (self.wins / self.game_count) * 100]]
+        table = [['All', self.game_count, self.wins, self.losses, self.win_percentage]]
 
         # Sort opponents by frequency.
         for opponent, opponent_data in sorted(self.opponents.items(), key=lambda k_v: k_v[1]['games'], reverse=True):
@@ -125,11 +126,18 @@ class Hero(object):
         card_table = []
         # Sort cards by best win percentage.
         cards_by_win_percent = []
+        deck_percentage_inserted = False
 
         for card, card_data in sorted(cards.items(), key=lambda k_v: k_v[1]['win percentage'], reverse=True):
             # Ignore small samples.
             if card_data['games'] < self.min_sample_size:
                 continue
+
+            # Add a marker row for the deck win rate.
+            if card_data['win percentage'] < self.win_percentage and not deck_percentage_inserted:
+                deck_percentage_inserted = True
+                card_table.append(['-- deck --', self.wins, self.win_percentage, self.game_count])
+
             cards_by_win_percent.append(card)
             card_table.append([card, card_data['wins'], card_data['win percentage'],
                                card_data['games'], (card_data['games'] / self.game_count) * 100,
@@ -179,7 +187,21 @@ class Hero(object):
             headers.append(opponent + ' (' + repr(self.opponents[opponent]['games']) + ')')
 
         table = []
+        deck_percentage_inserted = False
+
         for card in cards_by_win_percent:
+            # Add a marker row for the deck win rate.
+            if cards[card]['win percentage'] < self.win_percentage and not deck_percentage_inserted:
+                deck_percentage_inserted = True
+                deck_row = ['-- deck --', self.win_percentage]
+                for opponent in opponents_by_frequency:
+                    # Not every card will have been played against every opponent.
+                    if not opponent in cards[card]['opponents']:
+                        deck_row.append(None)
+                    else:
+                        deck_row.append(cards[card]['opponents'][opponent]['win percentage'])
+                table.append(deck_row)
+
             card_row = [card, cards[card]['win percentage']]
 
             for opponent in opponents_by_frequency:
