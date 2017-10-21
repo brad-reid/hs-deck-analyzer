@@ -196,10 +196,10 @@ class Hero(object):
                 deck_row = ['-- deck --', self.win_percentage]
                 for opponent in opponents_by_frequency:
                     # Not every card will have been played against every opponent.
-                    if not opponent in cards[card]['opponents']:
+                    if not opponent in self.opponents:
                         deck_row.append(None)
                     else:
-                        deck_row.append(cards[card]['opponents'][opponent]['win percentage'])
+                        deck_row.append((self.opponents[opponent]['wins'] / self.opponents[opponent]['games']) * 100)
                 table.append(deck_row)
 
             card_row = [card, cards[card]['win percentage']]
