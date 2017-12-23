@@ -1,4 +1,7 @@
 from tabulate import tabulate
+from pprint import pprint
+
+FLOAT_FORMAT = '.1f'
 
 class Hero(object):
     """Analyze how a specific hero performs.
@@ -72,7 +75,7 @@ class Hero(object):
         print("This data helps answer questions about how well your hero is performing against the meta you're facing ")
         print("and how well you're performing against the opponents you are targeting.")
         print()
-        print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt='pipe'))
+        print(tabulate(table, headers=headers, floatfmt=FLOAT_FORMAT, tablefmt='pipe'))
 
     def analyze_cards(self):
         """Analyze how the cards played by hero fared against all opponents.
@@ -150,7 +153,7 @@ class Hero(object):
         print("attempting to help answer questions about how the deck performs when you don't draw that card or it sits in your hand.")
         print("Note that data is only shown when a card is played on a turn at least " + repr(self.min_sample_size) + " times.")
         print()
-        print(tabulate(card_table, headers=card_headers, floatfmt='.2f', tablefmt='pipe'))
+        print(tabulate(card_table, headers=card_headers, floatfmt=FLOAT_FORMAT, tablefmt='pipe'))
 
         # Print the card vs. specific opponent analysis.
         # Note that this data really starts to suffer from sparse data.
@@ -176,7 +179,7 @@ class Hero(object):
                                    card_opponent_data['unplayed percentage']])
 
             print()
-            print(tabulate(card_table, headers=card_headers, floatfmt='.2f', tablefmt='pipe'))
+            print(tabulate(card_table, headers=card_headers, floatfmt=FLOAT_FORMAT, tablefmt='pipe'))
 
         # Print a win rate summary of all cards against all opponents.
         # Generate the headers, ordered by opponent frequency.
@@ -217,10 +220,10 @@ class Hero(object):
         print('Summarize the win rates of the cards against all opponents.')
         print("Cards are ordered by their overall win rate, opponents are ordered by frequency and show the game count in parentheses.")
         print()
-        print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt='pipe'))
+        print(tabulate(table, headers=headers, floatfmt=FLOAT_FORMAT, tablefmt='pipe'))
 
     def analyze_openings(self):
-        """Analyze how the various turn 1, 2, 3 openings fared.
+        """Analyze how the various first 2 turn openings fared.
             Summarize the various opening win rates, ordered by the plays rather than win rates.
         """
 
@@ -244,23 +247,23 @@ class Hero(object):
             opening_data['win percentage'] = (opening_data['wins'] / opening_data['games']) * 100
 
         # Print the analysis of the openings.
-        headers = ['turn 1', 'turn 2', 'turn 3', 'games', 'wins', 'losses', 'win %']
+        headers = ['turn 1', 'turn 2', 'games', 'wins', 'losses', 'win %']
         table = []
 
         # Sort openings by the turn 1, 2, 3 plays.
-        for opening, opening_data in sorted(openings.items(), key=lambda k_v: (sorted(k_v[0][0]), sorted(k_v[0][1]), sorted(k_v[0][2]))):
-            table.append([sorted(opening[0]), sorted(opening[1]), sorted(opening[2]),
+        for opening, opening_data in sorted(openings.items(), key=lambda k_v: (sorted(k_v[0][0]), sorted(k_v[0][1]))):
+            table.append([sorted(opening[0]), sorted(opening[1]),
                           opening_data['games'], opening_data['wins'], opening_data['losses'], opening_data['win percentage']])
 
         print()
         print('## Opening Sequence Win Rates')
-        print("Openings are your plays for the first 3 turns.")
+        print("Openings are your plays for the first 2 turns.")
         print("This data attempts to help answer questions about what cards you should mulligan for and which play sequences are strongest.")
         print("Unfortunately, this data is usually quite sparse.")
         print()
         print('Found ' + repr(len(openings)) + ' different openings in ' + repr(self.game_count) + ' games:')
         print()
-        print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt='pipe'))
+        print(tabulate(table, headers=headers, floatfmt=FLOAT_FORMAT, tablefmt='pipe'))
 
     def analyze_cards_by_turn(self):
         """Analyze the win rates for the cards played on specific turns.
@@ -313,7 +316,7 @@ class Hero(object):
         print("This data attempts to help answer questions about what cards you should mulligan for and which plays are strongest.")
         print("Furthermore, it can help validate whether your playstyle and plan for the deck is working.")
         print()
-        print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt='pipe'))
+        print(tabulate(table, headers=headers, floatfmt=FLOAT_FORMAT, tablefmt='pipe'))
 
     def analyze_mana(self):
         """Analyze the win rates for mana differential between what the hero spent and what
@@ -372,7 +375,7 @@ class Hero(object):
         print("Game % shows the percentage of games where this mana differential occurred.")
         print("Note that the game winner will usually take the last turn, which probably helps pad the mana spent in their favor.")
         print()
-        print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt="pipe"))
+        print(tabulate(table, headers=headers, floatfmt=FLOAT_FORMAT, tablefmt="pipe"))
 
     def analyze_games_by_rank(self):
         """Analyze the win rates for the deck at the different levels of ranked ladder play.
@@ -411,4 +414,4 @@ class Hero(object):
         print("This shows how the hero performed at the different ladder ranks.")
         print("This should help you gauge whether or not games at easier ranks are affecting the stats.")
         print()
-        print(tabulate(table, headers=headers, floatfmt='.2f', tablefmt="pipe"))
+        print(tabulate(table, headers=headers, floatfmt=FLOAT_FORMAT, tablefmt="pipe"))

@@ -77,10 +77,10 @@ class Game(object):
                              filter(lambda x : x['player'] == 'me' and x['turn'] == turn, self.game_data['card_history'])))
 
     def opening(self):
-        """Return a tuple of frozensets of the cards played each turn on the first 3 turns of this game.
+        """Return a tuple of frozensets of the cards played each turn on the first 2 turns of this game.
             e.g. (frozenset({'Mana Wyrm'}), frozenset({'Arcanologist'}), frozenset({'Mirror Entity', 'Kirin Tor Mage'}))
         """
-        return (self.cards_on_turn(1), self.cards_on_turn(2), self.cards_on_turn(3))
+        return (self.cards_on_turn(1), self.cards_on_turn(2))
 
     def last_turn(self):
         """Find the last turn taken by the hero in this game."""
