@@ -18,11 +18,14 @@ parser.add_argument('-o', '--outfile', type=str, default='trackobot_games.json',
                     + 'When run in fetch mode, always writes the data fetched.')
 parser.add_argument('-c', '--hero', type=str,
                     help='The hero class you want to analyze, e.g. Mage. If not specified all games will be analyzed with a simple summary.')
+parser.add_argument('-k', '--deck', type=str,
+                    help='The deck name you want to analyze, e.g. Other. If not specified all decks will be analyzed with a simple summary.')
 parser.add_argument('-s', '--sample-size', type=int, default=0,
                     help='The minimum sample size to require when displaying results for card related analyses. ' +
                     'If not specified all data will be shown.')
 parser.add_argument('-d', '--days', type=int, default=10,
                     help='The maximum number of days worth of data to fetch. Will not fetch more than 10 days.')
+
 args = parser.parse_args()
 
 # Get the game data to analyze.
@@ -56,14 +59,17 @@ print('{:.2%} win percentage'.format(wins/(wins + losses)))
 # Perform a more detailed analysis for the specified hero class.
 # TODO: Make it easy to turn on/off the various analyses. What's the right way to do that with argparse?
 if args.hero:
+    analysis_description = args.hero
+    if args.deck:
+        analysis_description = args.deck + ' ' + args.hero
     print()
-    print('--- Analyzing ' + args.hero + ' games ---')
-    hero = Hero(games, args.hero, args.sample_size)
-    hero.analyze_matchups()
-    hero.analyze_cards()
-    hero.analyze_openings()
+    print('--- Analyzing '  + analysis_description + ' games ---')
+    hero = Hero(games, args.hero, args.deck, args.sample_size)
     hero.analyze_cards_by_turn()
-    hero.analyze_mana()
+    hero.analyze_cards()
+    hero.analyze_matchups()
+    #hero.analyze_openings()
+    #hero.analyze_mana()
     hero.analyze_games_by_rank()
 
 

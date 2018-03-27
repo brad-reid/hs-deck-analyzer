@@ -9,14 +9,15 @@ class Hero(object):
         For reddit formatting tips see: https://www.reddit.com/r/reddit.com/comments/6ewgt/reddit_markdown_primer_or_how_do_you_do_all_that/c03nik6/
     """
 
-    def __init__(self, games: list, hero: str, min_sample_size=0):
-        """Create a new hero given a list of games and a hero.
+    def __init__(self, games: list, hero: str, deck: str, min_sample_size=0):
+        """Create a new hero given a list of games, a hero and an optional deck name.
             Games only count if they are ranked and some cards were played.
             If a minimum sample size is added, the card related analyses will only show data if there
             are at least that many results in the sample.
         """
         self.games = []
         self.hero = hero
+        self.deck = deck
         self.min_sample_size = min_sample_size
         self.wins = 0
         self.losses = 0
@@ -28,7 +29,7 @@ class Hero(object):
         # Only look at games where cards were played.
         # TODO: Only look at ranked games. Unfortunately Track-o-bot bugs sometimes and doesn't record ranked games as ranked.
         # TODO: To filter standard vs. wild you have to look at the cards.
-        for game in filter(lambda x: x.hero == hero and x.had_played_cards(), games):
+        for game in filter(lambda x: x.hero == hero and x.had_played_cards() and (not deck or (x.deck == deck)), games):
             self.games.append(game)
             if game.won():
                 self.wins += 1
@@ -125,7 +126,7 @@ class Hero(object):
                 unplayed_games = opponent_data['unplayed wins'] + opponent_data['unplayed losses']
                 opponent_data['unplayed percentage'] = 0 if unplayed_games == 0 else (opponent_data['unplayed wins'] / (unplayed_games)) * 100
             
-        card_headers = ['card vs. All', 'wins', 'win %', 'games', 'played %', 'unplayed wins', 'unplayed losses', 'unplayed win %']
+        card_headers = ['card vs. All', 'games', 'wins', 'losses', 'win %']
         card_table = []
         # Sort cards by best win percentage.
         cards_by_win_percent = []
@@ -139,12 +140,11 @@ class Hero(object):
             # Add a marker row for the deck win rate.
             if card_data['win percentage'] < self.win_percentage and not deck_percentage_inserted:
                 deck_percentage_inserted = True
-                card_table.append(['-- deck --', self.wins, self.win_percentage, self.game_count])
+                card_table.append(['-- deck --', self.game_count, self.wins, self.losses, self.win_percentage])
 
             cards_by_win_percent.append(card)
-            card_table.append([card, card_data['wins'], card_data['win percentage'],
-                               card_data['games'], (card_data['games'] / self.game_count) * 100,
-                               card_data['unplayed wins'], card_data['unplayed losses'], card_data['unplayed percentage']])
+            card_table.append([card, card_data['games'], card_data['wins'], card_data['losses'], card_data['win percentage']])
+
 
         print()
         print('## Card Win Rates')
@@ -163,8 +163,7 @@ class Hero(object):
             if opponent_game_count < self.game_count * .1:
                 continue
 
-            card_headers = [repr(opponent_game_count) + ' games vs. ' + opponent,
-                            'wins', 'win %', 'games', 'played %', 'unplayed wins', 'unplayed losses', 'unplayed win %']
+            card_headers = [repr(opponent_game_count) + ' games vs. ' + opponent, 'games', 'wins', 'losses', 'win %']
             card_table = []
             for card in cards_by_win_percent:
                 # Not every card will have been played against every opponent.
@@ -173,10 +172,7 @@ class Hero(object):
                 card_opponent_data = cards[card]['opponents'][opponent]
                 if card_opponent_data is None:
                     continue
-                card_table.append([card, card_opponent_data['wins'], card_opponent_data['win percentage'],
-                                   card_opponent_data['games'], (card_opponent_data['games'] / opponent_game_count) * 100,
-                                   card_opponent_data['unplayed wins'], card_opponent_data['unplayed losses'],
-                                   card_opponent_data['unplayed percentage']])
+                card_table.append([card, card_opponent_data['games'], card_opponent_data['wins'], card_opponent_data['losses'], card_opponent_data['win percentage']])
 
             print()
             print(tabulate(card_table, headers=card_headers, floatfmt=FLOAT_FORMAT, tablefmt='pipe'))
@@ -302,6 +298,9 @@ class Hero(object):
         headers = ['turn', 'play', 'games', 'wins', 'losses', 'win %']
         table = []
 
+        # A dictionary keyed by card name, holding the lists of turn data so we can do a view grouping the cards.
+        card_view = {}
+
         # Sort by turn, then win rate.
         for turn, turn_data in turns.items():
             for card, card_data in sorted(turn_data['cards'].items(), key=lambda k_v: k_v[1]['win percentage'], reverse=True):
@@ -310,11 +309,27 @@ class Hero(object):
                     continue
                 table.append([turn, card, card_data['games'], card_data['wins'], card_data['losses'], card_data['win percentage']])
 
+                # Seed the table data for the card based view.
+                card_view[card] = card_view.get(card, [])
+                card_view[card].append([turn, card, card_data['games'], card_data['wins'], card_data['losses'], card_data['win percentage']])
+
         print()
         print('## Win Rates When Playing Cards on Specific Turns')
         print("Note that data is only shown when a card is played on a turn at least " + repr(self.min_sample_size) + " times.")
         print("This data attempts to help answer questions about what cards you should mulligan for and which plays are strongest.")
         print("Furthermore, it can help validate whether your playstyle and plan for the deck is working.")
+        print()
+        print(tabulate(table, headers=headers, floatfmt=FLOAT_FORMAT, tablefmt='pipe'))
+
+        table = []
+
+        for card in sorted(card_view):
+            for table_row in card_view[card]:
+                table.append(table_row)
+                
+        print()
+        print('## Win Rates When Playing Cards on Specific Turns')
+        print("Same data ordered by cards instead of turns.")
         print()
         print(tabulate(table, headers=headers, floatfmt=FLOAT_FORMAT, tablefmt='pipe'))
 
